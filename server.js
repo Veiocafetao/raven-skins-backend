@@ -151,7 +151,7 @@ app.post('/api/cape', (req, res) => {
 
 // POST /api/heartbeat -> updates online status of a client
 app.post('/api/heartbeat', (req, res) => {
-    const { player, skin, ping, server } = req.body;
+    const { player, skin, ping, server, mode, subMode, map, state, elapsedTime } = req.body;
     
     if (!player || typeof player !== 'string' || !PLAYER_NAME_REGEX.test(player)) {
         return res.status(400).json({ error: 'Invalid player name' });
@@ -168,6 +168,11 @@ app.post('/api/heartbeat', (req, res) => {
         skin: skinName,
         ping: pingNum,
         server: serverName,
+        mode: (typeof mode === 'string' && mode.length <= 64 && mode.length > 0) ? mode : undefined,
+        subMode: (typeof subMode === 'string' && subMode.length <= 64 && subMode.length > 0) ? subMode : undefined,
+        map: (typeof map === 'string' && map.length <= 64 && map.length > 0) ? map : undefined,
+        state: (typeof state === 'string' && state.length <= 64 && state.length > 0) ? state : undefined,
+        elapsedTime: (typeof elapsedTime === 'string' && elapsedTime.length <= 32 && elapsedTime.length > 0) ? elapsedTime : undefined,
         lastSeen: Date.now()
     };
 
@@ -181,7 +186,12 @@ app.get('/api/online', (req, res) => {
         player: p.player,
         skin: p.skin,
         ping: p.ping,
-        server: p.server
+        server: p.server,
+        mode: p.mode,
+        subMode: p.subMode,
+        map: p.map,
+        state: p.state,
+        elapsedTime: p.elapsedTime
     }));
 
     res.json({
